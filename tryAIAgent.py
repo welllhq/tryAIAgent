@@ -3,7 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import requests
 import json
 from langchain.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings  
+from langchain_community.embeddings import OllamaEmbeddings  
 
 
 # 加载PDF文档
@@ -17,7 +17,7 @@ text_splitter = RecursiveCharacterTextSplitter(
     separators=["\n\n", "\n", "。", " ", ""]
 )
 chunks = text_splitter.split_documents(documents)
-print(f"分块后的文档数量：{len(chunks)}")
+#print(f"分块后的文档数量：{len(chunks)}")
 
 def get_embedding(chunk):
     url = "https://api.siliconflow.cn/v1/embeddings"
