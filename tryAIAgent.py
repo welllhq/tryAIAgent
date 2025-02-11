@@ -2,17 +2,18 @@ from langchain_community.document_loaders import PDFPlumberLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.prompts import ChatPromptTemplate
-#from langchain_ollama import OllamaLLM
-from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate,PromptTemplate,SystemMessagePromptTemplate
+from langchain_ollama import ChatOllama
+from langchain_deepseek import ChatDeepSeek
 from langchain.chains import RetrievalQA
-#from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough
+#from openai import OpenAI
 #from langchain import hub
 #import os
 #os.environ["LANGCHAIN_TRACING_V2"] = "true"
 #os.environ["LANGCHAIN_API_KEY"] = ""
 
-def doc_loader():
+def doc_loader(address):
     """
     加载PDF文档，并将其分割成合适的块大小返回。
     
@@ -20,12 +21,12 @@ def doc_loader():
         List: 文档块的列表。
     """
     # 初始化PDF加载器并加载PDF文档
-    loader = PDFPlumberLoader("C:\\Users\\Wells\\Desktop\\USR630S.pdf")
+    loader = PDFPlumberLoader(address)
     documents = loader.load()
     
     # 初始化文本分割器，并将加载的文档分割成指定大小的块
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=8000, chunk_overlap=200
+        chunk_size=8000, chunk_overlap=500
     )
     chunks = text_splitter.split_documents(documents)
     
@@ -62,43 +63,72 @@ def loading_vector_db():
     
     return vector_db
 
+# 将传入的文档转换成字符串的形式
+ 
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
+def doc_exec(address):
+    doc=doc_loader(address)
+    return embedding_docs(doc)
 
 if __name__ == "__main__":
-    print("Starting...\n")
-    
-    # 加载并分割文档
-    #chunks = doc_loader()
-    #print("切片完成\n")
-    
+  
+    print("正在处理文档…")
+    #vector_db = doc_exec("C:/Users/Wells/Desktop/雨中草莓地.PDF")
     # 加载向量数据库
     vector_db = loading_vector_db()
 
-    llm = ChatOpenAI(api_key="",
-                 model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-                 base_url="https://api.siliconflow.cn/v1")
+    llm = ChatDeepSeek(api_key="",
+                 model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+                 api_base="https://api.siliconflow.cn/v1",
+                 temperature=0)
     
-    prompt = """
-    请严格根据以下上下文回答问题,力求答案简洁：
-    {context}
+    #llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5)
+    
 
-    问题：{question}
-    如果上下文不相关，请回答“我不确定，请联系客服”。
-    答案：
-    """
-  
-    rag_prompt = ChatPromptTemplate([("system",prompt)])
-    retriever = vector_db.as_retriever()
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=retriever,
-        chain_type_kwargs={"prompt": rag_prompt},
-        return_source_documents=True
+
+    RAG_TEMPLATE = """
+    你是一个问答助手。请根据上下文简练但详细的回答问题。
+    可以发表自己想法。
+    
+
+    <context>
+    {context}
+    </context>
+
+    请根据问题作答:
+
+    {question}"""
+
+    sys_prompt = SystemMessagePromptTemplate.from_template(RAG_TEMPLATE)
+    rag_prompt = ChatPromptTemplate.from_messages([sys_prompt])
+
+    retriever = vector_db.as_retriever(search_kwargs={"k": 5})
+
+    qa_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | rag_prompt
+    #| llm
         )
-    question = "如何开启wlan功能？"
-    result = qa_chain.invoke({"query": question})
-    print(result["result"])
+
+    question = input("请输入问题：")
+   
+    # Run
+    for result in qa_chain.stream(question):
+        print(result.to_messages()[0].content,end="",flush=True)
+    #result=qa_chain.invoke(question)
+    #print(result)
+
+    
+
+
+
+
+
+
+    
+
 
 
 
