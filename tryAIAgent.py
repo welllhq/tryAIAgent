@@ -5,13 +5,13 @@ from langchain_community.vectorstores import FAISS
 from langchain.prompts import ChatPromptTemplate,PromptTemplate,SystemMessagePromptTemplate
 from langchain_ollama import ChatOllama
 from langchain_deepseek import ChatDeepSeek
-from langchain.chains import RetrievalQA
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from operator import itemgetter
 #from openai import OpenAI
-#from langchain import hub
 #import os
 #os.environ["LANGCHAIN_TRACING_V2"] = "true"
-#os.environ["LANGCHAIN_API_KEY"] = ""
+
 
 def doc_loader(address):
     """
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     # 加载向量数据库
     vector_db = loading_vector_db()
 
-    llm = ChatDeepSeek(api_key="",
+    llm = ChatDeepSeek(
                  model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
                  api_base="https://api.siliconflow.cn/v1",
                  temperature=0)
@@ -88,36 +88,39 @@ if __name__ == "__main__":
     
 
 
-    RAG_TEMPLATE = """
+    system_prompt = """
     你是一个问答助手。请根据上下文简练但详细的回答问题。
-    可以发表自己想法。
+    如果你不知道答案，请说“我不太清楚”。
     
 
     <context>
     {context}
     </context>
+    """
 
-    请根据问题作答:
-
-    {question}"""
-
-    sys_prompt = SystemMessagePromptTemplate.from_template(RAG_TEMPLATE)
-    rag_prompt = ChatPromptTemplate.from_messages([sys_prompt])
-
-    retriever = vector_db.as_retriever(search_kwargs={"k": 5})
-
-    qa_chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | rag_prompt
-    #| llm
+  
+    rag_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_prompt),
+            ("human", "以下是我的问题：{input}"),
+        ]
         )
+    retriever = vector_db.as_retriever(search_kwargs={"k": 5})
+    rag_chain = (
+    {"context": retriever | format_docs, "input": RunnablePassthrough()}
+    | rag_prompt
+    | llm
+    | StrOutputParser()
+    )   
 
-    question = input("请输入问题：")
+
+
+    #question = input("请输入问题：")
    
     # Run
-    for result in qa_chain.stream(question):
-        print(result.to_messages()[0].content,end="",flush=True)
-    #result=qa_chain.invoke(question)
+    for result in rag_chain.stream("概括一下剧情？"):
+        print(result,end="",flush=True)
+    #result=rag_chain.invoke("谈谈小张").pretty_repr
     #print(result)
 
     
