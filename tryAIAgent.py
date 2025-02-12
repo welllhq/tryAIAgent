@@ -8,11 +8,12 @@ from langchain_deepseek import ChatDeepSeek
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from operator import itemgetter
+from dotenv import load_dotenv
 #from openai import OpenAI
 #import os
 #os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
-
+load_dotenv()
 def doc_loader(address):
     """
     加载PDF文档，并将其分割成合适的块大小返回。
@@ -79,17 +80,17 @@ if __name__ == "__main__":
     # 加载向量数据库
     vector_db = loading_vector_db()
 
-    llm = ChatDeepSeek(
+    """llm = ChatDeepSeek(
                  model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
                  api_base="https://api.siliconflow.cn/v1",
-                 temperature=0)
+                 temperature=0)"""
     
-    #llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5)
+    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5)
     
 
 
     system_prompt = """
-    你是一个问答助手。请根据上下文简练但详细的回答问题。
+    你是一个问答助手。请根据上下文详细的回答问题。
     如果你不知道答案，请说“我不太清楚”。
     
 
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     #question = input("请输入问题：")
    
     # Run
-    for result in rag_chain.stream("概括一下剧情？"):
+    for result in rag_chain.stream("谁是杨晨？"):
         print(result,end="",flush=True)
     #result=rag_chain.invoke("谈谈小张").pretty_repr
     #print(result)
