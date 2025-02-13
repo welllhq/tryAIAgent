@@ -21,17 +21,21 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="faiss_utils.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tryAIAgent.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="faiss_index\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="faiss_index\index.faiss" />
-    <Content Include="faiss_index\index.pkl" />
+    <Content Include="faiss_index\1\index.faiss" />
+    <Content Include="faiss_index\1\index.pkl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="faiss_index\" />
+    <Folder Include="faiss_index\1\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
