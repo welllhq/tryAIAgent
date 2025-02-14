@@ -13,8 +13,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
-
 # 将传入的文档转换成字符串的形式
  
 def format_docs(docs):
@@ -29,7 +27,6 @@ if __name__ == "__main__":
                             #file_id=1)
     vector_db = load_faiss_from_local(1)
     print("加载成功")
-    breakpoint()
 
 
     """llm = ChatDeepSeek(
@@ -37,7 +34,7 @@ if __name__ == "__main__":
                  api_base="https://api.siliconflow.cn/v1",
                  temperature=1)"""
     
-    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5,format="json")
+    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5)
     
 
     system_prompt = """
@@ -62,13 +59,13 @@ if __name__ == "__main__":
     {"context": retriever | format_docs, "input": RunnablePassthrough()}
     | rag_prompt
     | llm
-    #| StrOutputParser()
+    | StrOutputParser()
     )   
 
 
 
     question ="概括一下剧情？"
-    print(rag_chain.invoke(question).content)
+    print(rag_chain.invoke(question))
    
     # Run
     #for result in rag_chain.stream("谁是杨晨？"):

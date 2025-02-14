@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>0b0699cc-5719-4660-9eed-5487bb825971</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>tryAIAgent.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,7 +24,7 @@
     <Compile Include="faiss_utils.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="tryAIAgent.py" />
+    <Compile Include="main.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env">

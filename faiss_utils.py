@@ -45,13 +45,16 @@ def index_document_to_faiss(file_path: str, file_id: int) -> bool:
     - bool - 表示操作是否成功的布尔值
     """
     try:
-        # 加载并分割文档
-        splits = load_and_split_document(file_path)
+        if not os.path.exists(os.path.join('faiss_index', str(file_id))):            
+            # 加载并分割文档
+            splits = load_and_split_document(file_path)
         
-        # 将文档块转换为向量并保存到FAISS数据库
-        vectorDB = FAISS.from_documents(splits, embeddings)
-        vectorDB.save_local(os.path.join('faiss_index', str(file_id)))
-        return True
+            # 将文档块转换为向量并保存到FAISS数据库
+            vectorDB = FAISS.from_documents(splits, embeddings)
+            vectorDB.save_local(os.path.join('faiss_index', str(file_id)))
+            return True
+        else:
+            raise ValueError("文件ID已存在")
     except Exception as e:
         print(f"创建\保存向量库失败: {e}")
         return False
