@@ -12,6 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>tryRAGapp</Name>
     <RootNamespace>tryAIAgent</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +23,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="db_utils.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="faiss_utils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="langchain_utils.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
