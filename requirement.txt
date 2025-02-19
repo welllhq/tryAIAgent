@@ -1,0 +1,10 @@
+
+
+langchain
+langchain-community
+langchain-core
+langchain-ollama
+langchain-deepseek
+faiss-cpu
+fastapi
+uvicorn

@@ -14,8 +14,8 @@ load_dotenv()
 
 #llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0.5)
 llm = ChatDeepSeek(
-    model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-    #model_name="deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+    #model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    model_name="deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
     api_base="https://api.siliconflow.cn/v1",
     temperature=1)
 

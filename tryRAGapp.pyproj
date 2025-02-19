@@ -33,6 +33,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
+    <Compile Include="pydantic_models.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env">
@@ -40,6 +43,7 @@
     </Content>
     <Content Include="faiss_index\1\index.faiss" />
     <Content Include="faiss_index\1\index.pkl" />
+    <Content Include="requirement.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="faiss_index\" />
